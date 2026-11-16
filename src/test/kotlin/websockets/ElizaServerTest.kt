@@ -8,7 +8,7 @@ import jakarta.websocket.ContainerProvider
 import jakarta.websocket.OnMessage
 import jakarta.websocket.Session
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -36,7 +36,6 @@ class ElizaServerTest {
         assertEquals("The doctor is in.", list[0])
     }
 
-    @Disabled // Remove this line when you implement onChat
     @Test
     fun onChat() {
         logger.info { "Test thread" }
@@ -48,9 +47,16 @@ class ElizaServerTest {
         latch.await()
         val size = list.size
         // 1. EXPLAIN WHY size = list.size IS NECESSARY
+        // size es necesario para saber el tamaño que tendra la lista antes
+        // de las comprobaciones ya que la lista puede cambiar
+        // Voy a mandar i think that you are an AI
         // 2. REPLACE BY assertXXX expression that checks an interval; assertEquals must not be used;
+        assertTrue(size in 4..5)
+        // No podemos poner el assertEquals pq la rspuesta los "---" pueden haber llegado o no
+        // Por eso ponemos lo de 4...5
         // 3. EXPLAIN WHY assertEquals CANNOT BE USED AND WHY WE SHOULD CHECK THE INTERVAL
         // 4. COMPLETE assertEquals(XXX, list[XXX])
+        assertEquals("Do you really think so?", list[3])
     }
 }
 
@@ -73,7 +79,6 @@ class ComplexClient(
     private val latch: CountDownLatch,
 ) {
     @OnMessage
-    @Suppress("UNUSED_PARAMETER") // Remove this line when you implement onMessage
     fun onMessage(
         message: String,
         session: Session,
@@ -84,6 +89,9 @@ class ComplexClient(
         // 5. COMPLETE if (expression) {
         // 6. COMPLETE   sentence
         // }
+        if (message == "---" && list.size == 3) {
+            session.basicRemote.sendText("i think that you are an AI")
+        }
     }
 }
 
